@@ -1,0 +1,182 @@
+<!-- ============================= -->
+<!--  UNIVERSAL EVENT BUILDER V6  -->
+<!--  EventEase Branding Added -->
+<!-- ============================= -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EventEase - Your One-Page Invitation</title>
+<style>
+  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#fafafa; color:#333; transition:0.3s; }
+  .container { max-width:900px; margin:0 auto; padding:20px; }
+  h1, h2 { font-weight:600; }
+  .section { background:white; padding:20px; border-radius:12px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+  input, select, textarea { width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; margin-top:10px; }
+  button { padding:12px 20px; background:#333; color:white; border-radius:8px; border:none; cursor:pointer; margin-top:10px; }
+  .preview { padding:20px; background:white; border-radius:12px; margin-top:30px; box-shadow:0 2px 8px rgba(0,0,0,0.1); animation:fadeIn 0.6s ease-in-out; }
+  .gallery img { border-radius:10px; margin:5px; }
+  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+  body.gold { background: #fff8e6; }
+  body.dark { background:#111; color:white; }
+  body.dark .section, body.dark .preview { background:#222; color:white; }
+  body.pastel { background:#ffeef7; }
+  .header { text-align:center; margin-bottom:30px; }
+  .tagline { font-style:italic; color:#666; margin-top:5px; }
+</style>
+</head>
+<body class="default">
+<div class="container">
+  <div class="header">
+    <h1>EventEase</h1>
+    <div class="tagline">Your one-page invitation for every celebration.</div>
+  </div>
+
+  <!-- Theme Selector -->
+  <div class="section">
+    <h2>Theme</h2>
+    <select id="theme" onchange="changeTheme()">
+      <option value="default">Default</option>
+      <option value="gold">Elegant Gold</option>
+      <option value="dark">Dark Mode</option>
+      <option value="pastel">Soft Pastel</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <h2>Event Information</h2>
+    <input id="title" placeholder="Event Title" />
+    <input id="host" placeholder="Host Name(s)" />
+    <input id="date" placeholder="Event Date" />
+
+    <h3>Event Type</h3>
+    <select id="eventType">
+      <option value="">Select Event Type</option>
+      <option>Adults Only</option><option>Couples</option><option>Singles</option>
+      <option>Family</option><option>Kids Only</option><option>All Ages</option>
+      <option>Other</option>
+    </select>
+
+    <h3>Time of Event</h3>
+    <select id="generalTime">
+      <option value="">General Time</option>
+      <option>Morning</option><option>Afternoon</option><option>Evening</option><option>All Day</option>
+    </select>
+
+    <select id="specificTime">
+      <option value="">Specific Time</option>
+      <option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option>
+      <option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option>
+      <option>5:00 PM</option><option>6:00 PM</option><option>7:00 PM</option><option>8:00 PM</option>
+      <option>9:00 PM</option><option>10:00 PM</option><option>11:00 PM</option><option>12:00 AM</option>
+    </select>
+
+    <label><input type="checkbox" id="showMusic" checked /> Include Theme Song / Music</label>
+    <input id="music" placeholder="Paste music URL (MP3)" />
+
+    <h3>Location</h3>
+    <input id="venue" placeholder="Venue Name" />
+    <textarea id="address" placeholder="Venue Address"></textarea>
+    <h3>Google Maps Embed (optional)</h3>
+    <input id="map" placeholder="Paste Google Maps Embed URL" />
+  </div>
+
+  <div class="section">
+    <label><input type="checkbox" id="showGallery" checked /> Include Gallery</label>
+    <h2>Gallery Layout</h2>
+    <select id="galleryLayout">
+      <option value="single">Single Image</option>
+      <option value="side">Side-by-Side 2 Images</option>
+      <option value="grid">Grid of 3</option>
+    </select>
+    <input id="img1" placeholder="Image URL 1" />
+    <input id="img2" placeholder="Image URL 2" />
+    <input id="img3" placeholder="Image URL 3" />
+  </div>
+
+  <div class="section">
+    <h2>RSVP Settings</h2>
+    <p>RSVP will include Name, Email/Phone, Solo/Plus One</p>
+    <select id="rsvpMethod">
+      <option value="none">No storage</option>
+      <option value="email">Send to Email</option>
+      <option value="sheet">Save to Google Sheet</option>
+    </select>
+    <input id="emailTarget" placeholder="Email (if selected)" />
+    <input id="sheetURL" placeholder="Google Sheet Web App URL" />
+  </div>
+
+  <button onclick="generatePage()">Generate Event Page</button>
+  <button onclick="downloadPage()">Download HTML</button>
+  <button onclick="shareLink()">Generate Share Link</button>
+  <div id="preview" class="preview" style="display:none"></div>
+  <input id="shareURL" readonly style="width:100%; margin-top:10px; padding:10px; display:none;" />
+</div>
+
+<script>
+function changeTheme() { document.body.className = theme.value; }
+
+function generatePage() {
+  const d = {
+    title: title.value, host: host.value, date: date.value,
+    eventType: eventType.value, generalTime: generalTime.value, specificTime: specificTime.value,
+    venue: venue.value, address: address.value, music: music.value, map: map.value,
+    img1: img1.value, img2: img2.value, img3: img3.value,
+    showMusic: showMusic.checked, showGallery: showGallery.checked, galleryLayout: galleryLayout.value
+  };
+
+  preview.style.display = "block";
+  preview.innerHTML = `
+    <h2>${d.title}</h2>
+    <p>Hosted by <strong>${d.host}</strong></p>
+    <p><strong>Date:</strong> ${d.date}</p>
+    <p><strong>Event Type:</strong> ${d.eventType}</p>
+    <p><strong>Time:</strong> ${d.generalTime} — ${d.specificTime}</p>
+    <p><strong>Venue:</strong> ${d.venue}</p>
+    <p><strong>Address:</strong> ${d.address}</p>
+    ${d.showMusic && d.music ? `<audio controls style="width:100%; margin-top:15px;"><source src="${d.music}" type="audio/mpeg"></audio>` : ""}
+    ${d.showGallery ? `<div class="gallery" style="display:flex; flex-wrap:wrap;">${
+      (d.img1 ? `<img src='${d.img1}' style='${d.galleryLayout==='single'?'width:100%;':d.galleryLayout==='side'?'width:48%;':'width:30%;'}'>`:'') +
+      (d.img2 ? `<img src='${d.img2}' style='${d.galleryLayout==='side'?'width:48%;':'width:30%;'}'>`:'') +
+      (d.img3 ? `<img src='${d.img3}' style='${d.galleryLayout==='grid'?'width:30%;':''}'>`:'')
+    }</div>` : ""}
+    ${d.map ? `<iframe src='${d.map}' width='100%' height='300' style='border:0;margin-top:15px;' allowfullscreen></iframe>` : ""}
+    <h3>Countdown</h3>
+    <div id="countdown"></div>
+    <script>
+      const eventDate = new Date('${d.date}').getTime();
+      const timer = setInterval(()=>{
+        const now = Date.now();
+        const diff = eventDate - now;
+        if(diff < 0){ countdown.innerHTML = "Event Started!"; clearInterval(timer);} else { countdown.innerHTML = Math.floor(diff/86400000)+" days remaining"; }
+      },1000);
+    <\/script>
+  `;
+}
+
+function downloadPage() {
+  const content = `<html><head><meta charset='UTF-8'><title>${title.value}</title></head><body>${preview.innerHTML}</body></html>`;
+  const blob = new Blob([content], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${title.value || 'event'}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function shareLink() {
+  const content = `<html><head><meta charset='UTF-8'><title>${title.value}</title></head><body>${preview.innerHTML}</body></html>`;
+  const blob = new Blob([content], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  shareURL.value = url;
+  shareURL.style.display = 'block';
+  shareURL.select();
+  document.execCommand('copy');
+  alert('Share link copied!');
+}
+</script>
+</body>
+</html>
